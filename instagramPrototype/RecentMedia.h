@@ -16,7 +16,7 @@
 @property (strong, nonatomic) NSArray *tags;
 @property (strong, nonatomic) NSString *type;
 @property (strong, nonatomic) NSString *location;
-@property (strong, nonatomic) NSArray *comments;
+@property int comments;
 @property (strong, nonatomic) NSString *filter;
 @property (strong, nonatomic) NSString *createdTime;
 @property (strong, nonatomic) NSString *link;

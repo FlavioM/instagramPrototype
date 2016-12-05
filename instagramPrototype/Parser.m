@@ -35,6 +35,7 @@
 #define KW_RECENT_TYPE @"type"
 #define KW_RECENT_LOCATION @"location"
 #define KW_RECENT_COMMENTS @"comments"
+#define KW_RECENT_COMMENTS_COUNT @"count"
 #define KW_RECENT_FILTER @"filter"
 #define KW_RECENT_CREATEDTIME @"created_time"
 #define KW_RECENT_LINK @"link"
@@ -79,11 +80,10 @@
     NSMutableArray *arr = [[NSMutableArray alloc] init];
     if(!dictionary)
         return nil;
-    if([[dictionary objectForKey:@"meta"] intValue] == 200){
-        for(NSDictionary *dic in [dictionary objectForKey:@"data"]){
-            [arr addObject:[Parser parseRecent:dic]];
-        }
+    for(NSDictionary *dic in [dictionary objectForKey:@"data"]){
+        [arr addObject:[Parser parseRecentMedia:dic]];
     }
+    
     return arr;
 }
 
@@ -121,7 +121,7 @@
     rm.tags = [dictionary objectForKey:KW_RECENT_TAGS];
     rm.type = [dictionary objectForKey:KW_RECENT_TYPE];
     rm.location = [dictionary objectForKey:KW_RECENT_LOCATION];
-    rm.comments = [dictionary objectForKey:KW_RECENT_COMMENTS];
+    rm.comments = [[[dictionary objectForKey:KW_RECENT_COMMENTS] objectForKey:KW_RECENT_COMMENTS_COUNT] intValue];
     rm.filter = [dictionary objectForKey:KW_RECENT_FILTER];
     rm.createdTime = [dictionary objectForKey:KW_RECENT_CREATEDTIME];
     rm.link = [dictionary objectForKey:KW_RECENT_LINK];
@@ -141,17 +141,35 @@
 +(NSArray *) parseUsersInPhoto:(NSArray *) users
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for(NSDictionary *user in users)
-        [arr addObject:[Parser parseUserObj:user]];
+    if([users count] > 0)
+        for(NSDictionary *user in users)
+            [arr addObject:[Parser parseUserObj:user]];
     
     return arr;
 }
 
-+(NSArray *) parseImages:(NSArray *) dictionary
++(NSArray *) parseImages:(NSDictionary *) dictionary
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for(NSDictionary *dic in dictionary)
-        [arr addObject:[Parser parseIGImage:dic]];
+    if([dictionary objectForKey:KW_IMAGE_LOWRESOLUTION])
+    {
+        IGImage *img = [Parser parseIGImage:[dictionary objectForKey:KW_IMAGE_LOWRESOLUTION]];
+        img.type = TYPE_LOWRESOLUTION;
+        [arr addObject:img];
+    }
+    if([dictionary objectForKey:KW_IMAGE_THUMBNAILRESOLUTION])
+    {
+        IGImage *img = [Parser parseIGImage:[dictionary objectForKey:KW_IMAGE_THUMBNAILRESOLUTION]];
+        img.type = TYPE_THUMBNAIL;
+        [arr addObject:img];
+    }
+    if([dictionary objectForKey:KW_IMAGE_ORIGINALRESOLUTION])
+    {
+        IGImage *img = [Parser parseIGImage:[dictionary objectForKey:KW_IMAGE_ORIGINALRESOLUTION]];
+        img.type = TYPE_ORIGINAL;
+        [arr addObject:img];
+    }
+    
     return arr;
 }
 

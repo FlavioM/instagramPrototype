@@ -7,7 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RecentMedia.h"
 
 @interface RecentMediaTableViewCell : UITableViewCell
+
+@property (strong, nonatomic) RecentMedia *recentMedia;
+
+@property (weak, nonatomic) IBOutlet UIImageView *mediaImage;
+@property (weak, nonatomic) IBOutlet UILabel *labelCommentsCount;
+@property (weak, nonatomic) IBOutlet UILabel *labelLikes;
+@property (weak, nonatomic) IBOutlet UILabel *labelTags;
+
+
 
 @end

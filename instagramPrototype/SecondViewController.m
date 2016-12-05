@@ -8,6 +8,7 @@
 
 #import "SecondViewController.h"
 #import "UserTableViewCell.h"
+#import "RecentMediaTableViewCell.h"
 
 #define KW_REUSE_CELL @"UserTableViewCell"
 
@@ -18,18 +19,8 @@
 @implementation SecondViewController
 
 
+#pragma mark - ViewController's methods
 
--(void)goBack:(UIBarButtonItem *)sender {
-    if([Utils deleteToken])
-    {
-        NSLog(@"Token deleted.");
-        [self.navigationController popToRootViewControllerAnimated:YES];
-        
-        
-    }else{
-        NSLog(@"Couldn't delete the token!\nCall someone!");
-    }
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -52,7 +43,34 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+
+#pragma mark - this VC's custom methods
+
+-(void)goBack:(UIBarButtonItem *)sender {
+    if([Utils deleteToken])
+    {
+        NSLog(@"Token deleted.");
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+        
+    }else{
+        NSLog(@"Couldn't delete the token!\nCall someone!");
+    }
+}
+
+
+-(UITableViewCell *) getRecentCell:(int) position
+{
+    RecentMediaTableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:@"RecentMediaTableViewCell" owner:self options:nil] objectAtIndex:0];
+    
+    [cell setRecentMedia:[self.recentMedia objectAtIndex:position]];
+    [cell awakeFromNib];
+    
+    return cell;
+}
+
+
+#pragma mark - Table view data source / delegate methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
@@ -71,7 +89,7 @@
     if(indexPath.row == 0){
         cell = [self getUserCell];
     }else{
-       // cell = [self getRecentCell:indexPath.row-1];
+        cell = [self getRecentCell:indexPath.row-1];
     }
     
     // Configure the cell...

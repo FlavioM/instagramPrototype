@@ -11,7 +11,7 @@
 
 #define INSTAGRAM_BASEREQUEST_URL @"https://api.instagram.com/v1/users"
 #define INSTAGRAM_REQUEST_SELF_URL @"/self/?access_token="
-#define INSTAGRAM_REQUEST_SELF_LATEST_URL @"/users/self/media/recent?access_token="
+#define INSTAGRAM_REQUEST_SELF_LATEST_URL @"/self/media/recent?access_token="
 
 @implementation Requester
 
