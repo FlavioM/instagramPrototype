@@ -15,7 +15,15 @@
 
 @implementation Requester
 
-
+/*!
+ @brief Method used to retrieve a User's profile information.
+ 
+ @discussion This method builds the URL for the User profile request, and makes a GET request to that URL.
+ 
+ @param token   The NSString representation of the token aquired when logging in.
+ 
+ @return NSDictionary returns the JSON retrieved from the request (when valid) in a neat NSDictioanry.
+ */
 +(NSDictionary *) getUserData:(NSString *) token
 {
 
@@ -26,6 +34,16 @@
     return dic;
 }
 
+
+/*!
+ @brief Method used to retrieve a User's recent media.
+ 
+ @discussion This method builds the URL for the RecentMedia request, and makes a GET request to that URL.
+ 
+ @param token   The NSString representation of the token aquired when logging in.
+ 
+ @return NSDictionary returns the JSON retrieved from the request (when valid) in a neat NSDictioanry.
+ */
 +(NSDictionary *) getRecentData:(NSString *) token
 {
     NSString *url = [NSString stringWithFormat:@"%@%@%@", INSTAGRAM_BASEREQUEST_URL, INSTAGRAM_REQUEST_SELF_LATEST_URL, token, nil];
@@ -35,7 +53,15 @@
 }
 
 
-
+/*!
+ @brief Method used to make GET requests
+ 
+ @discussion This method accepts an NSString representation of the URL, and makes a SYNCHRONOUS request to that URL.
+ 
+ @param url The NSString representation of the desired URL to make a GET request to.
+ 
+ @return NSDictionary returns an NSDictionary representation of the JSON data retrieved.
+ */
 +(NSDictionary *) GetRequest:(NSString *)url
 {
     NSURL *action_Url =[NSURL URLWithString:url];
@@ -60,7 +86,7 @@
                                   JSONObjectWithData:action_Result
                                   options:NSJSONReadingMutableLeaves
                                   error:nil];
-        // NSLog(@"jsonObject is %@",jsonObject);
+        
         return jsonObject;
     }
     

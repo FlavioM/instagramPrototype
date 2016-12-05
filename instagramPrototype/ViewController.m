@@ -11,7 +11,7 @@
 //#define INSTA_REDIRECT_URL @"http://instagram-callback.com/coiso"
 
 #define INSTA_RESPONSETYPE_TOKEN @"token"
-
+#define KW_ACCESS_TOKEN @"#access_token="
 
 #import "ViewController.h"
 #import "Utils.h"
@@ -28,12 +28,13 @@
     
 //    //clean ALL cookies
     for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]){
-        NSLog(@"%@", cookie, nil);
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
     }
 //
 //    //allow ALL cookies
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+    
+    //if the user has a valid authentication saved, open the 2nd screen
     if([Utils isLoggedIn])
     {
         [self.navigationController performSegueWithIdentifier:@"secondScreen" sender:self];
@@ -49,10 +50,17 @@
 }
 
 
+
+/*!
+ @brief Action called when the user presses the big (login) button
+ 
+ @discussion This method attempts to delete all cookies from the webview, and then presents the Login view for Instagram.
+ Should be assigned to the button's action
+ @param  sender The button.
+ */
 - (IBAction)login:(id)sender {
     //delete ALL cookies in NSHTTPCookieStorage...
     for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]){
-        NSLog(@"%@", cookie, nil);
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
     }
     
@@ -90,13 +98,13 @@
     [self.view bringSubviewToFront:self.webView];
 
     
-    NSLog(@"Button pressed.\n##########################################################");
+    
 
     NSString *url = [NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=%@", INSTA_CLIENT_ID, INSTA_REDIRECT_URL, INSTA_RESPONSETYPE_TOKEN, nil];
 //    NSString *url = [NSString stringWithFormat:@"", GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URL, nil];
     
     
-    NSLog(@"Auth URL: %@", url, nil);
+    //NSLog(@"Auth URL: %@", url, nil);
     
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
@@ -112,53 +120,14 @@
 
 #pragma mark - WKWebView Delegate methods
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request       navigationType:(UIWebViewNavigationType)navigationType
-{
-    
-    NSString *url = [request mainDocumentURL].absoluteString;
-    NSLog(@"Loading... %@", url, nil);
-    return YES;
-}
-
-- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
-{
-    
-    NSURL *myRequestedUrl= self.webView.URL;
-    NSLog(@"didCommitNavigation url: %@", myRequestedUrl);
-}
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    [self.webView setHidden:NO];
-    NSURL *myLoadedUrl = self.webView.URL;
-    NSLog(@"Loaded url: %@", myLoadedUrl);
-    
-}
-
-- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(null_unspecified WKNavigation *)navigation
-{
-    NSLog(@"Redirected url: %@", navigation);
-    
-}
-
+//action to take when the user "successfully" authenticates.
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
-
-//    NSLog(@"Error!!!: %@", error);
     
-    NSURL *err = [error.userInfo objectForKey:@"NSErrorFailingURLKey"];
-//    NSLog(@"URL ##################################\n %@ ", err);
-    if([err.absoluteString hasPrefix:INSTA_REDIRECT_URL]){
-        NSString *token = [[err.absoluteString componentsSeparatedByString:@"#access_token="] objectAtIndex:1];
-        
-        [Utils saveToken:token];
-        
-        [self.webView removeFromSuperview];
-        self.webView = nil;
-        NSLog(@"\nToken: %@", token, nil);
-        
-        [self.navigationController performSegueWithIdentifier:@"secondScreen" sender:self];
-        //open next view controller
+    NSURL *url = [error.userInfo objectForKey:@"NSErrorFailingURLKey"];
+
+    if([self validateLogin:url]){
+        [self loggedIn:url];
     }else{
         //TODO: No internet? something else went wrong..
         
@@ -167,6 +136,44 @@
     
 }
 
+/*!
+ @brief Checks if the login was successful
+ 
+ @discussion This method accepts an NSURL and checks if the desired keyword is in it, making it a valid (or not) login.
+ 
+ @param  url    the URL to validate as a successful forwarded URL
+ 
+ @return BOOL Was it a successful login?
+ */
+-(BOOL) validateLogin:(NSURL *)url
+{
+    if([url.absoluteString hasPrefix:INSTA_REDIRECT_URL])
+        return TRUE;
+    return FALSE;
+}
 
+
+/*!
+ @brief Method called when the user successfully logged in.
+ 
+ @discussion This method saves the token inside the forwarded_url, removes the login webview, and presents the SecondScreen.
+ 
+ @param  forwarded_url the URL to which the user was forwarded.
+ 
+ 
+ */
+-(void) loggedIn:(NSURL *) forwarded_url
+{
+    NSString *token = [[forwarded_url.absoluteString componentsSeparatedByString:KW_ACCESS_TOKEN] objectAtIndex:1];
+    
+    [Utils saveToken:token];
+    
+    [self.webView removeFromSuperview];
+    self.webView = nil;
+    
+    //open next view controller
+    [self.navigationController performSegueWithIdentifier:@"secondScreen" sender:self];
+
+}
 
 @end

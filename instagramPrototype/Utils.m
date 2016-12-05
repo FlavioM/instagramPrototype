@@ -13,7 +13,17 @@
 
 @implementation Utils
 
-
+/*!
+ @brief Save the user's retrieved token.
+ 
+ @discussion Method used to save a user's <i>access_token</i> in NSUserDefaults.
+ 
+ 
+ @param token   The access_token
+ 
+ @return BOOL returns the success of the operation.
+ 
+ */
 +(BOOL) saveToken:(NSString *) token
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -21,6 +31,14 @@
     return [defaults synchronize];
 }
 
+/*!
+ @brief Delete the user's saved token.
+ 
+ @discussion Method used to delete a user's <i>access_token</i> from NSUserDefaults.
+ 
+ @return BOOL returns the success of the operation.
+ 
+ */
 +(BOOL) deleteToken
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -28,6 +46,16 @@
     return [defaults synchronize];
 }
 
+/*!
+ @brief Retrieve a UserObj representation of the User's profile.
+ 
+ @discussion Method used to make a remote request to retrieve the User's profile and parse it into an UserObj object.
+ 
+ 
+ @return UserObj The UserObj of the currently logged in User.
+ 
+ 
+ */
 +(UserObj *) getUser
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -39,6 +67,14 @@
     return userObj;
 }
 
+/*!
+ @brief Retrieve the Recent Media posts associated with this user.
+ 
+ @discussion Method used to get the currently logged in user's Recent posts.
+ 
+ @return NSArray returns the user's latest Media publications.
+ 
+ */
 +(NSArray *) getRecentMedia
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -48,12 +84,21 @@
     return arr;
 }
 
+
+/*!
+ @brief Check if the user is logged in.
+ 
+ @discussion Method used to check if a user has a valid token saved in the device's NSUserDefaults.
+ 
+ @return BOOL returns TRUE when the user has a locally saved token, FALSE when he doesn't.
+ 
+ */
 +(BOOL) isLoggedIn
 {
     UserObj *user = [Utils getUser];
     if(user)
-        return true;
-    return false;
+        return TRUE;
+    return FALSE;
     
 }
 

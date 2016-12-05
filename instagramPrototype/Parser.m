@@ -51,7 +51,15 @@
 
 @implementation Parser
 
-
+/*!
+ @brief Quickly build a UserObj object from an NSDictionary.
+ 
+ @discussion Method used to parse the NSDictionary representation of the User's Profile into it's UserObj object.
+ 
+ @param dictionary   The NSDictionary retrieved from the <i>[Requester getUserData:token]</i>
+ 
+ @return UserObj returns the UserObj object representation of the User's profile.
+ */
 +(UserObj *) parseUserObj:(NSDictionary *) dictionary
 {
     if(!dictionary)
@@ -74,7 +82,15 @@
     return obj;
 }
 
-
+/*!
+ @brief Parse an array of RecentMedia objects from an NSDictionary.
+ 
+ @discussion Method used to parse the RecentMedia objects in an NSDictionary.
+ 
+ @param dictionary   The NSDictionary containing the required data. Can be easily retrieved from <i>[Requester getRecentData:token]</i>
+ 
+ @return NSArray returns an array containing the RecentMedia objects represented in the NSDictionary.
+ */
 +(NSArray *) parseRecent:(NSDictionary *)dictionary
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
@@ -87,6 +103,16 @@
     return arr;
 }
 
+/*!
+ @brief Quickly build an IGImage object from an NSDictionary.
+ 
+ @discussion Method used to parse the NSDictionary representation of the image into it's IGImage object.
+ 
+ @param dictionary   The NSDictionary representing the Media post's image.
+ 
+ @return IGImage returns an IGImage object representation of the Media post's image.
+ 
+ */
 +(IGImage *) parseIGImage:(NSDictionary *) dictionary
 {
         IGImage *img = [[IGImage alloc] init];
@@ -112,6 +138,15 @@
     return img;
 }
 
+/*!
+ @brief Quickly build a RecentMedia object from an NSDictionary.
+ 
+ @discussion Method used to parse the NSDictionary representation of the object into it's RecentMedia object.
+ 
+ @param dictionary   The NSDictionary containing the RecentMedia object's representation.
+ 
+ @return UserObj returns the RecentMedia object representation of a Media post.
+ */
 +(RecentMedia *) parseRecentMedia:(NSDictionary *) dictionary
 {
     
@@ -138,6 +173,16 @@
     return rm;
 }
 
+/*!
+ @brief Parse the users tagged in a Media Post.
+ 
+ @discussion Method used to parse the NSDictionary representation of the users associated with a certain Media post.
+ 
+ 
+ @param users   An array of NSDictionaries associated with Users who were tagged in the Media post.
+ 
+ @return NSarray returns an array of UserObj objects of the users tagged in a Media post.
+ */
 +(NSArray *) parseUsersInPhoto:(NSArray *) users
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
@@ -148,6 +193,17 @@
     return arr;
 }
 
+
+/*!
+ @brief Parse the images (Thumbnail, LowResolution and OriginalResolution) associated with RecentMedia objects.
+ 
+ @discussion Method used to parse the NSDictionary representation of the image resolutions associated with a RecentMedia post.
+ 
+ @param dictionary   The NSDictionary containing the IGImages array.
+ 
+ @return NSArray Returns an array with the (so far) three possible image resolutions and their informations.
+ 
+ */
 +(NSArray *) parseImages:(NSDictionary *) dictionary
 {
     NSMutableArray *arr = [[NSMutableArray alloc] init];

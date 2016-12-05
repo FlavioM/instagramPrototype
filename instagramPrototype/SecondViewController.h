@@ -10,6 +10,8 @@
 #import "UserObj.h"
 #import "RecentMedia.h"
 #import "IGImage.h"
+#import "UserTableViewCell.h"
+#import "RecentMediaTableViewCell.h"
 
 #import "Utils.h"
 
@@ -17,6 +19,8 @@
 
 @property (strong, nonatomic) NSArray *recentMedia;
 @property (strong, nonatomic) UserObj *user;
+-(RecentMediaTableViewCell *) getRecentCell:(int) position;
+-(UserTableViewCell *) getUserCell;
 
 
 @end

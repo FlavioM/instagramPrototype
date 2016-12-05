@@ -7,8 +7,6 @@
 //
 
 #import "SecondViewController.h"
-#import "UserTableViewCell.h"
-#import "RecentMediaTableViewCell.h"
 
 #define KW_REUSE_CELL @"UserTableViewCell"
 
@@ -46,6 +44,15 @@
 
 #pragma mark - this VC's custom methods
 
+/*!
+ @brief Method used to logout and close this ViewController
+ 
+ @discussion This method tries to delete the token associated with the current user, and then goes back to the First Screen.
+ 
+ @param  sender     The UIOutlet that called this method.
+ 
+ 
+ */
 -(void)goBack:(UIBarButtonItem *)sender {
     if([Utils deleteToken])
     {
@@ -58,14 +65,39 @@
     }
 }
 
-
--(UITableViewCell *) getRecentCell:(int) position
+/*!
+ @brief Method used to create a customized UITableViewCell (RecentMediaTableViewCell) for a RecentMedia object.
+ 
+ @discussion This method creates and returns a RecentMediaTableViewCell, sets it's RecentMedia object, and updates the cell's UI.
+ 
+ @param  position   The position of the RecentMedia object in the ViewController's array of RecentMedia objects.
+ 
+ @return RecentMediaTableViewCell returns a cell with the RecentMedia object associated and it's UI customized for the RecentMedia object.
+ */
+-(RecentMediaTableViewCell *) getRecentCell:(int) position
 {
     RecentMediaTableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:@"RecentMediaTableViewCell" owner:self options:nil] objectAtIndex:0];
     
     [cell setRecentMedia:[self.recentMedia objectAtIndex:position]];
     [cell awakeFromNib];
     
+    return cell;
+}
+
+
+/*!
+ @brief Method used to create a customized UITableViewCell (UserTableViewCell) for a UserObj object.
+ 
+ @discussion This method creates and returns a UserTableViewCell, sets it's UserObj object, and updates the cell's UI.
+ 
+
+ @return UserTableViewCell returns a cell with the UserObj object associated and it's UI customized for the UserObj object.
+ */
+-(UserTableViewCell *) getUserCell
+{
+    UserTableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:@"UserTableViewCell" owner:self options:nil] objectAtIndex:0];
+    [cell setUser:[Utils getUser]];
+    [cell awakeFromNib];
     return cell;
 }
 
@@ -86,13 +118,14 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;// = [tableView dequeueReusableCellWithIdentifier:KW_REUSE_CELL forIndexPath:indexPath];
 
+    
+    //first cell is for the user profile cell
     if(indexPath.row == 0){
         cell = [self getUserCell];
     }else{
+        //other rows are for RecentMedia cells!
         cell = [self getRecentCell:indexPath.row-1];
     }
-    
-    // Configure the cell...
     
     return cell;
 }
@@ -112,57 +145,5 @@
     }
 }
 
-
--(UserTableViewCell *) getUserCell
-{
-    UserTableViewCell *cell = [[[NSBundle mainBundle] loadNibNamed:@"UserTableViewCell" owner:self options:nil] objectAtIndex:0];
-    [cell setUser:[Utils getUser]];
-    [cell awakeFromNib];
-    return cell;
-}
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
