@@ -136,11 +136,6 @@
     if(indexPath.row == 0){
         return 350;
     }else{
-        RecentMedia *rm = [self.recentMedia objectAtIndex:indexPath.row-1];
-        
-        
-        
-        
         return 250;
     }
 }
